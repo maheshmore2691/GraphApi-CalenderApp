@@ -1,0 +1,60 @@
+﻿@{
+    ViewData["Title"] = "Events";
+}
+
+<form onsubmit="getEvents(); return false;">
+    <div class="form-group">
+        <label for="txtUserName">User Name</label>
+        <input type="email" id="txtUserName" class="form-control" placeholder="name@example.com" />
+        <br />
+        <input type="submit" id="btnEvents" value="Get Events" class="btn btn-primary" />
+    </div>
+    <div class="container">
+        <table id="tblEvents" class="table table-striped">
+            <thead>
+                <tr>
+                    <td>Organizer</td>
+                    <td>Participants</td>
+                    <td>Event Body</td>
+                    <td>Start Time</td>
+                    <td>End Time</td>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</form>
+
+@section scripts {
+    <script type="text/javascript">
+        function getEvents() {
+            if ($('#txtUserName').val() !== '') {
+
+                $("#tblEvents > tr").remove();
+
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("getevents")',
+                    data: {
+                        userName: $('#txtUserName').val()
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        $.each(data, function (index, row) {
+                            var htmlRow = `<tr><td>${row.organizer}</td><td>${row.participants}</td><td>${row.eventBody}</td>
+                                        <td>${row.startDateTime}</td><td>${row.endDateTime}</td>`;
+
+                            $('#tblEvents').append(htmlRow);
+                        });
+                    },
+                    error: function (error) {
+                        $('#results').text('Failed to fetch events!');
+                    }
+                });
+            }
+            else {
+                alert('Empty!');
+            }
+        }
+    </script>
+}
+

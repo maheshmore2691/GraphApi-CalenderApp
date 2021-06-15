@@ -1,0 +1,49 @@
+﻿@{ 
+    ViewData["Title"] = "Register";
+}
+
+<form asp-action="registertenant">
+    <div class="text-center">
+        <h1 class="display-4">Share your calendar with us!</h1>
+        <br />
+        <br />
+        <div class="btn-toolbar shareButtons" role="toolbar">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">@@</div>
+                </div>
+                <input type="text" name="tenantId" id="txtTenantId" class="form-control" placeholder="Your tenant id" />
+                <br />
+                <div class="btn-group" role="group">
+                    <div class="col-md-6">
+                        <button id="btnOutlook" type="submit" class="btn btn-primary">Outlook</button>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-primary">Gmail</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section scripts {
+    <script type="text/javascript">
+        @*$('#btnOutlook').click(RegisterTenant);
+
+        function RegisterTenant() {
+            $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("registertenant")',
+                    data: {
+                        tenantId: $('#txtTenantId').val()
+                    },
+                    //dataType: "json",
+                    success: function (data) {
+                    },
+                    error: function (error) {
+                    }
+                });
+        }*@
+    </script>
+}

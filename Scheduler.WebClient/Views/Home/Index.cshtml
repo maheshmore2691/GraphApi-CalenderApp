@@ -1,0 +1,31 @@
+﻿@model ProviderViewModel;
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+        <h1 class="display-4">Share your calendar with us!</h1>
+        @if (Model.ExternalProviders.Any())
+        {
+            <div class="col-md-6 col-sm-6 external-providers">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <ul class="list-inline">
+                            @foreach (var provider in Model.ExternalProviders)
+                            {
+                                <li>
+                                    <a class="btn btn-default"
+                                       asp-action="ExternalLogin"
+                                       asp-route-provider="@provider.AuthenticationScheme"
+                                       asp-route-returnUrl="/Home/Callback">
+                                        @provider.DisplayName
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
