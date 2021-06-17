@@ -7,7 +7,7 @@
         <label for="txtUserName">User Name</label>
         <input type="email" id="txtUserName" class="form-control" placeholder="name@example.com" />
         <br />
-        <input type="submit" id="btnEvents" value="Get Events" class="btn btn-primary" />
+        <input type="submit" id="btnEvents" value="Get Events" class="btn btn-outline-primary" />
     </div>
     <div class="container">
         <table id="tblEvents" class="table table-striped">
@@ -41,13 +41,15 @@
                     success: function (data) {
                         $.each(data, function (index, row) {
                             var htmlRow = `<tr><td>${row.organizer}</td><td>${row.participants}</td><td>${row.eventBody}</td>
-                                        <td>${row.startDateTime}</td><td>${row.endDateTime}</td>`;
+                                        <td>${row.startDateTime}</td><td>${row.endDateTime}</td></tr>`;
 
                             $('#tblEvents').append(htmlRow);
                         });
                     },
                     error: function (error) {
-                        $('#results').text('Failed to fetch events!');
+                        var htmlRow = `<tr colspan="5"><td>No records found!</td></tr>`;
+
+                        $('#tblEvents').append(htmlRow);
                     }
                 });
             }

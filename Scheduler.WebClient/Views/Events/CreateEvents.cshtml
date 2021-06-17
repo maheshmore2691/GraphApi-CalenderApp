@@ -5,11 +5,19 @@
 <form onsubmit="createMeetingEvent(); return false;">
     <div class="container">
         <div class="form-group col-6">
-            <input type="email" id="emailAddress" class="form-control" placeholder="name@example.com" on />
-            <br />
-            <input class="form-control" id="datetimepicker" type="text" disabled autocomplete="off" />
-            <br /> <br />
-            <input type="submit" id="btnAddEvents" value="Create Event" class="btn btn-outline-primary"/>
+            <div class="form-group">
+                <label for="emailAddress">Email address</label>
+                <input type="email" id="emailAddress" class="form-control" placeholder="name@example.com" on />
+            </div>
+            <div class="form-group">
+                <label for="datetimepicker">Pickup Date</label>
+                <input class="form-control" id="datetimepicker" type="text" disabled autocomplete="off" />
+            </div>
+            <div class="form-group" id="divParticipants">
+                <label for="txtEmailIds">Participants</label>
+                <input class="form-control" placeholder="name@example.com" id="txtEmailIds" type="text" />
+            </div>
+            <input type="submit" id="btnAddEvents" value="Create Event" class="btn btn-outline-primary" />
             <br />
             <br />
             <div hidden id="successResult" class="alert alert-success" role="alert">
@@ -33,6 +41,21 @@
         var dict = {};
 
         $(document).ready(() => {
+
+            $('#txtEmailIds').tagsinput({
+                focusClass: 'focus',
+                maxTags: undefined,
+                maxChars: undefined,
+                freeInput: true,
+                addOnBlur: true,
+                confirmKeys: [32, 44, 59],
+                cancelConfirmKeysOnEmpty: true,
+                tagClass: 'form-control',
+                delimiter: ';',
+                trimValue: true,
+                allowDuplicates: false
+            });
+
             $.datetimepicker.setLocale('en');
 
             $('#datetimepicker').datetimepicker({
@@ -70,7 +93,6 @@
                             dict = {};
 
                             $.each(data, function (index, row) {
-                                console.log(row.startTime);
                                 if (!(row.startDate in dict)) {
                                     dict[row.startDate] = [row.startTime]
                                 }
@@ -91,19 +113,23 @@
         function createMeetingEvent() {
             var emailField = $('#emailAddress');
             var meetingDate = $('#datetimepicker');
+            var participantsIds = $('#txtEmailIds');
 
-            if (emailField.val() !== '' && meetingDate.val() !== '') {
+            if (emailField.val() !== '' && meetingDate.val() !== '' && participantsIds.val() !== '' && participantsIds.tagsinput('items').length > 0) {
                 $.ajax({
                     type: "POST",
                     url: '@Url.Action("createmeetingevent")',
                     data: {
                         EmailAddress: emailField.val(),
-                        AppointmentDateTime: meetingDate.val()
+                        AppointmentDateTime: meetingDate.val(),
+                        Participants: participantsIds.tagsinput('items')
                     },
                     //dataType: "json",
                     success: function (data) {
                         emailField.val('');
                         meetingDate.val('');
+                        participantsIds.val('');
+
                         $('#successResult').removeAttr('hidden');
                         $('#errorResult').attr('hidden');
                         $('#datetimepicker').attr('disabled');
