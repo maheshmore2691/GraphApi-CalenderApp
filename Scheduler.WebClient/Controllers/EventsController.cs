@@ -95,5 +95,26 @@ namespace Scheduler.WebClient.Controllers
                 return StatusCode(500);
             }
         }
+
+        public IActionResult EmailEvent()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ActionName("createappointmentconfirmationemailevent")]
+        public async Task<IActionResult> CreateAppointmentConfirmationEmailEvent(string emailAddress, string appointmentDateTime)
+        {
+            emailAddress = "ankit.dhadse@emtecinc.com";
+            if (string.IsNullOrWhiteSpace(emailAddress) || string.IsNullOrWhiteSpace(appointmentDateTime))
+            {
+                return BadRequest();
+            }
+
+            var meetingEvent = await _graphApiClient.SendAppointmentConfirmationEmail(emailAddress,
+                Convert.ToDateTime(appointmentDateTime, CultureInfo.CurrentCulture)).ConfigureAwait(false);
+
+            return meetingEvent ? Ok() : StatusCode(500);
+        }
     }
 }

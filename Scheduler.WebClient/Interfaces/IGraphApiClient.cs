@@ -9,5 +9,7 @@ namespace Scheduler.WebClient.Interfaces
     {
         Task<ICalendarEventsCollectionPage> GetCalenderEventAsync(string userName);
         Task<Event> CreateCalenderEventAsync(string emailAddress, DateTime appointmentDateTime);
+
+        Task<bool> SendAppointmentConfirmationEmail(string emailAddress, DateTime appointmentDateTime);
     }
 }

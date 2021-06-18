@@ -1,0 +1,169 @@
+{
+  "type": "AdaptiveCard",
+  "body": [
+    {
+      "type": "Container",
+      "style": "emphasis",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "Calendar Availability",
+          "wrap": true,
+          "weight": "Bolder"
+        }
+      ],
+      "padding": "Default"
+    },
+    {
+      "type": "Container",
+      "id": "d96d06ec-2a33-c8cc-4698-430ae87f772f",
+      "padding": "Default",
+      "items": [
+        {
+          "type": "TextBlock",
+          "size": "Medium",
+          "weight": "Bolder",
+          "text": "Take 2 minutes to help us plan the upcoming appointment scheduling",
+          "wrap": true
+        }
+      ],
+      "spacing": "None",
+      "separator": true,
+      "style": "emphasis"
+    },
+    {
+      "type": "Container",
+      "id": "10017c5a-5ee9-46c5-537a-bdd9ab61225c",
+      "padding": {
+        "top": "None",
+        "bottom": "Default",
+        "left": "Default",
+        "right": "Default"
+      },
+      "items": [
+        {
+          "type": "ColumnSet",
+          "columns": [
+            {
+              "type": "Column",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "id": "SlotDurationLabel",
+                  "text": "Slot Duration: ",
+                  "wrap": true
+                }
+              ],
+              "padding": {
+                "top": "Small",
+                "bottom": "None",
+                "left": "None",
+                "right": "None"
+              },
+              "width": "auto"
+            },
+            {
+              "type": "Column",
+              "items": [
+                {
+                  "type": "Input.Number",
+                  "id": "SlotDuration",
+                  "placeholder": "Ex. 2 Hours",
+                  "min": "1",
+                  "max": "24",
+                  "isRequired": true
+                }
+              ],
+              "padding": "None",
+              "width": "120px"
+            }
+          ],
+          "padding": "None"
+        },
+        {
+          "type": "ColumnSet",
+          "columns": [
+            {
+              "type": "Column",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "id": "AppointmentsPerSlotLabel",
+                  "text": "Appointments Per Slot: ",
+                  "wrap": true
+                }
+              ],
+              "padding": {
+                "top": "Small",
+                "bottom": "None",
+                "left": "None",
+                "right": "None"
+              },
+              "width": "auto"
+            },
+            {
+              "type": "Column",
+              "items": [
+                {
+                  "type": "Input.ChoiceSet",
+                  "id": "ApptPerSlot",
+                  "placeholderText": "10 Docks",
+                  "choices": [
+                    {
+                      "title": "1 Dock",
+                      "value": "1"
+                    },
+                    {
+                      "title": "5 Docks",
+                      "value": "5"
+                    },
+                    {
+                      "title": "10 Docks",
+                      "value": "10"
+                    }
+                  ]
+                }
+              ],
+              "padding": "None",
+              "width": "120px"
+            }
+          ],
+          "padding": "None"
+        }
+      ],
+      "spacing": "None",
+      "style": "emphasis",
+      "separator": true
+    },
+    {
+      "type": "Container",
+      "id": "a27409f1-a48e-982f-8e26-594bdd1468e8",
+      "padding": "Default",
+      "items": [
+        {
+          "type": "ActionSet",
+          "horizontalAlignment": "Left",
+          "actions": [
+            {
+              "type": "Action.Http",
+              "title": "Share Availability",
+              "method": "POST",
+              "url": "https://7d441858dd3e.ngrok.io/api/slotGenerator",
+              "body": "{\"SlotDuration\": \"{{SlotDuration.value}}\", \"ApptPerSlot\": \"{{ApptPerSlot.value}}\"}",
+              "isPrimary": true,
+              "style": "positive"
+            }
+          ]
+        }
+      ],
+      "spacing": "None",
+      "style": "emphasis",
+      "separator": true
+    }
+  ],
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.0",
+  "padding": "None",
+  "@type": "AdaptiveCard",
+  "@context": "http://schema.org/extensions"
+}
