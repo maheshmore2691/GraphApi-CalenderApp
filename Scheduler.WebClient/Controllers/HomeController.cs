@@ -66,9 +66,9 @@ namespace Scheduler.WebClient.Controllers
         [ActionName("registertenant")]
         public IActionResult RegisterTenant(string tenantId)
         {
-            var adminConsentUrl = $"https://login.microsoftonline.com/{tenantId}/v2.0/adminconsent?client_id={_config.AzureConfigs.ClientId}&scope=https://graph.microsoft.com/Calendars.ReadWrite https://graph.microsoft.com/Mail.Send&redirect_uri=http://localhost:17794/";
+            //var adminConsentUrl = $"https://login.microsoftonline.com/{tenantId}/v2.0/adminconsent?client_id={_config.AzureConfigs.ClientId}&scope=User.Read Calendars.ReadWrite Calendars.Read Calendars.Read Calendars.ReadWrite Directory.Read.All Group.Read.All User.Read.All&redirect_uri=http://localhost:17794/";
 
-            //var adminConsentUrl = $"https://login.microsoftonline.com/{tenantId}/adminconsent?client_id={_config.AzureConfigs.ClientId}";
+            var adminConsentUrl = $"https://login.microsoftonline.com/{tenantId}/adminconsent?client_id={_config.AzureConfigs.ClientId}";
             return Redirect(adminConsentUrl);
         }
 

@@ -4,6 +4,7 @@ namespace Scheduler.WebClient.Controllers
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Graph.Extensions;
@@ -52,12 +53,12 @@ namespace Scheduler.WebClient.Controllers
                         EventBody = meetingEvent.BodyPreview,
                         Organizer = meetingEvent.Organizer.EmailAddress.Address,
                         Participants = participants,
-                        StartDateTime = meetingEvent.Start.ToDateTime().ToString(),
-                        StartDate = meetingEvent.Start.ToDateTime().Date.ToShortDateString(),
-                        StartTime = meetingEvent.Start.ToDateTime().TimeOfDay.ToString(),
-                        EndDateTime = meetingEvent.End.ToDateTime().ToString(),
-                        EndDate = meetingEvent.End.ToDateTime().Date.ToShortDateString(),
-                        EndTime = meetingEvent.End.ToDateTime().TimeOfDay.ToString()
+                        StartDateTime = meetingEvent.Start.ToDateTime().ToLocalTime().ToString(),
+                        StartDate = meetingEvent.Start.ToDateTime().ToLocalTime().Date.ToShortDateString(),
+                        StartTime = meetingEvent.Start.ToDateTime().ToLocalTime().TimeOfDay.ToString(),
+                        EndDateTime = meetingEvent.End.ToDateTime().ToLocalTime().ToString(),
+                        EndDate = meetingEvent.End.ToDateTime().ToLocalTime().Date.ToShortDateString(),
+                        EndTime = meetingEvent.End.ToDateTime().ToLocalTime().TimeOfDay.ToString()
                     });
                 }
 
@@ -76,15 +77,15 @@ namespace Scheduler.WebClient.Controllers
 
         [HttpPost]
         [ActionName("createmeetingevent")]
-        public async Task<IActionResult> CreateMeetingEvents(string emailAddress, string appointmentDateTime)
+        public async Task<IActionResult> CreateMeetingEvents(string emailAddress, string appointmentDateTime, List<string> participants)
         {
-            if(string.IsNullOrWhiteSpace(emailAddress) || string.IsNullOrWhiteSpace(appointmentDateTime))
+            if(string.IsNullOrWhiteSpace(emailAddress) || string.IsNullOrWhiteSpace(appointmentDateTime) || !appointmentDateTime.Any())
             {
                 return BadRequest();
             }
 
             var meetingEvent = await _graphApiClient.CreateCalenderEventAsync(emailAddress, 
-                Convert.ToDateTime(appointmentDateTime, CultureInfo.CurrentCulture)).ConfigureAwait(false);
+                Convert.ToDateTime(appointmentDateTime, CultureInfo.CurrentCulture), participants).ConfigureAwait(false);
 
             if(meetingEvent != null)
             {

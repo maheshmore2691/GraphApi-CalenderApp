@@ -52,28 +52,32 @@ namespace Scheduler.WebClient.Helpers
             }
         }
 
-        public async Task<Event> CreateCalenderEventAsync(string emailAddress, DateTime appointmentDateTime)
+        public async Task<Event> CreateCalenderEventAsync(string emailAddress, DateTime appointmentDateTime, List<string> participants)
         {
             try
             {
+                var attendees = new List<Attendee>();
+
+                foreach (var participant in participants)
+                {
+                    attendees.Add(new Attendee
+                    {
+                        EmailAddress = new EmailAddress
+                        { Address = participant, Name = participant }
+                    });
+                }
                 var meetingEvent = new Event
                 {
-                    Attendees = new List<Attendee>
-                    {
-                        new Attendee {
-                            EmailAddress = new EmailAddress
-                            { Address = "", Name="Mahesh" }
-                        }
-                    },
-                    Body = new ItemBody
-                    {
-                        Content = "This is sample test meeting using client credential work flow.",
-                        ContentType = BodyType.Text
-                    },
-                    Organizer = new Recipient {
-                        EmailAddress = new EmailAddress
-                        { Address = emailAddress, Name = "Test User" }
-                    },
+                    Attendees = attendees,
+                    Body = new ItemBody 
+                            { 
+                                    Content = "This is sample test meeting using client credential work flow.",
+                                    ContentType = BodyType.Text
+                            },
+                    Organizer = new Recipient { 
+                                    EmailAddress = new EmailAddress 
+                                                { Address = emailAddress, Name = "Test User" } 
+                                },
                     Subject = "Demo meeting - Graph API",
                     Start = new DateTimeTimeZone { DateTime = appointmentDateTime.ToString(), TimeZone = TimeZoneInfo.Local.StandardName },
                     End = new DateTimeTimeZone { DateTime = appointmentDateTime.AddHours(1).ToString(), TimeZone = TimeZoneInfo.Local.StandardName }
