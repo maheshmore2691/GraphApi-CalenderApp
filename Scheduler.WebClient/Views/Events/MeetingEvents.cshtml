@@ -14,6 +14,7 @@
             <thead>
                 <tr>
                     <td>Organizer</td>
+                    <td>Subject</td>
                     <td>Participants</td>
                     <td>Event Body</td>
                     <td>Start Time</td>
@@ -40,21 +41,18 @@
                     dataType: "json",
                     success: function (data) {
                         $.each(data, function (index, row) {
-                            var htmlRow = `<tr><td>${row.organizer}</td><td>${row.participants}</td><td>${row.eventBody}</td>
+                            var htmlRow = `<tr><td>${row.organizer}</td><td>${row.subject}</td><td>${row.participants}</td><td>${row.eventBody}</td>
                                         <td>${row.startDateTime}</td><td>${row.endDateTime}</td></tr>`;
 
                             $('#tblEvents').append(htmlRow);
                         });
                     },
                     error: function (error) {
-                        var htmlRow = `<tr colspan="5"><td>No records found!</td></tr>`;
+                        var htmlRow = `<tr colspan="6"><td>No records found!</td></tr>`;
 
                         $('#tblEvents').append(htmlRow);
                     }
                 });
-            }
-            else {
-                alert('Empty!');
             }
         }
     </script>

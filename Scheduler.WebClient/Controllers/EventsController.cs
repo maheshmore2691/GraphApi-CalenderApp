@@ -24,7 +24,7 @@ namespace Scheduler.WebClient.Controllers
         {
             return View();
         }
-
+             
         [HttpGet]
         [ActionName("getevents")]
         public async Task<IActionResult> GetEvents(string userName)
@@ -50,12 +50,17 @@ namespace Scheduler.WebClient.Controllers
 
                     events.Add(new EventViewModel
                     {
+                        Subject = meetingEvent.Subject,
                         EventBody = meetingEvent.BodyPreview,
                         Organizer = meetingEvent.Organizer.EmailAddress.Address,
                         Participants = participants,
+                        
+                        Start = meetingEvent.Start,
                         StartDateTime = meetingEvent.Start.ToDateTime().ToLocalTime().ToString(),
                         StartDate = meetingEvent.Start.ToDateTime().ToLocalTime().Date.ToShortDateString(),
                         StartTime = meetingEvent.Start.ToDateTime().ToLocalTime().TimeOfDay.ToString(),
+
+                        End = meetingEvent.End,
                         EndDateTime = meetingEvent.End.ToDateTime().ToLocalTime().ToString(),
                         EndDate = meetingEvent.End.ToDateTime().ToLocalTime().Date.ToShortDateString(),
                         EndTime = meetingEvent.End.ToDateTime().ToLocalTime().TimeOfDay.ToString()
@@ -68,7 +73,7 @@ namespace Scheduler.WebClient.Controllers
             {
                 return NotFound();
             }
-        }
+        }             
 
         public IActionResult CreateEvents()
         {
@@ -116,6 +121,45 @@ namespace Scheduler.WebClient.Controllers
                 Convert.ToDateTime(appointmentDateTime, CultureInfo.CurrentCulture)).ConfigureAwait(false);
 
             return meetingEvent ? Ok() : StatusCode(500);
+        }
+
+        public IActionResult Calendar()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        [ActionName("getcalendarevents")]
+        public async Task<IActionResult> GetCalendarEvents(string userName)
+        {
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                return NotFound();
+            }
+
+            var result = await GetEvents(userName).ConfigureAwait(false);
+
+            if (result != null)
+            {
+                var meetings = (result as OkObjectResult).Value as List<EventViewModel>;
+                var calendarEvents = new List<CalendarEvent>();
+
+                foreach (var item in meetings)
+                {
+                    calendarEvents.Add(new CalendarEvent
+                    {
+                        title = item.Subject,
+                        start = item.Start.ToDateTime().ToLocalTime().ToString("O"),
+                        end = item.End.ToDateTime().ToLocalTime().ToString("O")
+                    });
+                }
+
+                return Ok(calendarEvents);
+            }
+            else
+            {
+                return NotFound();
+            }
         }
     }
 }

@@ -43,7 +43,7 @@ namespace Scheduler.WebClient
             //    {
             //        options.Authority = "https://login.microsoftonline.com/common";
             //        options.TokenValidationParameters = new TokenValidationParameters { ValidateIssuer = false };
-            //        options.ClientId = "cac93ee8-6478-471f-986e-f5d0174a7bbc";
+            //        options.ClientId = "";
             //        options.CallbackPath = "/signin-oidc";
             //        options.SaveTokens = true;
             //        options.Scope.Add("https://graph.microsoft.com/Calendars.ReadWrite");
