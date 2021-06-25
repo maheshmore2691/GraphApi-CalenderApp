@@ -1,0 +1,120 @@
+﻿@{
+    ViewData["Title"] = "Email Appointment";
+}
+
+<form onsubmit="createAppointmentConfirmationEmailEvent(); return false;">
+    <div class="container">
+        <div class="form-group col-6">
+            <input type="email" id="emailAddress" class="form-control" placeholder="user@facility.com" on />
+            <br />
+            <input class="form-control" id="datetimepicker" type="text" disabled autocomplete="off" />
+            <br />
+            <input type="submit" id="btnSendEmailEvent" value="Send Email" class="btn btn-outline-primary" />
+            <br /> <br />
+            <div hidden id="successResult" class="alert alert-success" role="alert">
+                <h4 class="alert-heading">Email Sent!</h4>
+                <p>
+                    Appointment Confirmation Email sent to Facility successfully.
+                </p>
+            </div>
+            <div hidden id="errorResult" class="alert alert-danger" role="alert">
+                <h4 class="alert-heading">Oops!</h4>
+                <p>
+                    Something went wrong!
+                </p>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+@section scripts {
+    <script type="text/javascript">
+        var dict = {};
+
+        $(document).ready(() => {
+            $.datetimepicker.setLocale('en');
+
+            $('#datetimepicker').datetimepicker({
+                onGenerate: function (ct, $i) {
+                    var localDate = ct.toLocaleDateString();
+                    if (dict !== undefined && dict.hasOwnProperty(localDate)) {
+                        var times = dict[localDate].map(t => parseInt(t));
+
+                        $('.xdsoft_time_variant .xdsoft_time').show();
+
+                        if (times !== undefined) {
+                            $('.xdsoft_time_variant .xdsoft_time').each(function (index) {
+                                if (times.indexOf(parseInt($(this).text())) !== -1) {
+                                    $(this).hide();
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+        });
+
+        $('#emailAddress').focusout((el) => {
+            if ($(el.target).val().length >= 13)
+            {
+                $.ajax({
+                        type: "GET",
+                        url: '@Url.Action("getevents")',
+                        data: {
+                            userName: $('#emailAddress').val()
+                        },
+                        dataType: "json",
+                        success: function (data) {
+                            $('#datetimepicker').removeAttr('disabled');
+                            dict = {};
+
+                            $.each(data, function (index, row) {
+                                console.log(row.startTime);
+                                if (!(row.startDate in dict)) {
+                                    dict[row.startDate] = [row.startTime]
+                                }
+                                else {
+                                    let tempRecord = dict[row.startDate];
+                                    tempRecord.push(row.startTime);
+                                    dict[row.startDate] = tempRecord;
+                                }
+                            });
+                        },
+                        error: function (error) {
+                            $('#results').text('Failed to fetch events!');
+                        }
+                    });
+            }
+        });
+
+        //createappointmentconfirmationemailevent
+        function createAppointmentConfirmationEmailEvent() {
+            var emailField = $('#emailAddress');
+            var meetingDate = $('#datetimepicker');
+
+            if (emailField.val() !== '' && meetingDate.val() !== '') {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("createappointmentconfirmationemailevent")',
+                    data: {
+                        EmailAddress: emailField.val(),
+                        AppointmentDateTime: meetingDate.val()
+                    },
+                    //dataType: "json",
+                    success: function (data) {
+                        emailField.val('');
+                        meetingDate.val('');
+                        $('#successResult').removeAttr('hidden');
+                        $('#errorResult').attr('hidden');
+                        $('#datetimepicker').attr('disabled');
+                    },
+                    error: function (error) {
+                        $('#errorResult').removeAttr('hidden');
+                        $('#successResult').attr('hidden');
+                    }
+                });
+            }
+        }
+    </script>
+}

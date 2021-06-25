@@ -10,6 +10,7 @@ namespace Scheduler.WebClient.Helpers
     using Newtonsoft.Json;
     using Scheduler.WebClient.Interfaces;
     using Scheduler.WebClient.Models;
+    using Scheduler.WebClient.Utilities;
 
     public class GraphApiClient : IGraphApiClient
     {
@@ -80,7 +81,7 @@ namespace Scheduler.WebClient.Helpers
                     Subject = "Demo meeting - Graph API",
                     Start = new DateTimeTimeZone { DateTime = appointmentDateTime.ToString(), TimeZone = TimeZoneInfo.Local.StandardName },
                     End = new DateTimeTimeZone { DateTime = appointmentDateTime.AddHours(1).ToString(), TimeZone = TimeZoneInfo.Local.StandardName }
-                    };
+                };
 
                 var events = await _graphClient.Users[emailAddress]
                     .Calendar
@@ -93,6 +94,44 @@ namespace Scheduler.WebClient.Helpers
             catch (Exception ex)
             {
                 return null;
+            }
+        }
+
+
+        public async Task<bool> SendAppointmentConfirmationEmail(string emailAddress, DateTime appointmentDateTime)
+        {
+            try
+            {
+                var actionableMessage = new Message
+                {
+                    Subject = $"Schedule appointment with Carrier XYZ on {appointmentDateTime.ToShortDateString()} @ {appointmentDateTime.Hour}:{appointmentDateTime.Minute}",
+                    Body = new ItemBody
+                    {
+                        ContentType = BodyType.Html,
+                        Content = AdaptiveCardReader.LoadConfirmApptActionableMessageBody()
+                    },
+                    ToRecipients = new List<Recipient>()
+                    {
+                        new Recipient
+                        {
+                            EmailAddress = new EmailAddress
+                            {
+                                Address = emailAddress
+                            }
+                        }
+                    },
+                };
+
+                var saveToSentItems = true;
+                var appointmentSchedulerUser = _graphClient.Users[_config.AzureConfigs.AppointmentSchedulerEmailId];
+                var emailRequest = appointmentSchedulerUser.SendMail(actionableMessage, saveToSentItems).Request();
+                await emailRequest.PostAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex?.Message}");
+                return false;
             }
         }
 
