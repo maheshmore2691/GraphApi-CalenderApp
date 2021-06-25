@@ -73,6 +73,38 @@ namespace Scheduler.WebClient.Controllers
             {
                 return NotFound();
             }
+        }             
+
+        public IActionResult CreateEvents()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ActionName("createmeetingevent")]
+        public async Task<IActionResult> CreateMeetingEvents(string emailAddress, string appointmentDateTime, List<string> participants)
+        {
+            if(string.IsNullOrWhiteSpace(emailAddress) || string.IsNullOrWhiteSpace(appointmentDateTime) || !appointmentDateTime.Any())
+            {
+                return BadRequest();
+            }
+
+            var meetingEvent = await _graphApiClient.CreateCalenderEventAsync(emailAddress, 
+                Convert.ToDateTime(appointmentDateTime, CultureInfo.CurrentCulture), participants).ConfigureAwait(false);
+
+            if(meetingEvent != null)
+            {
+                return Ok();
+            }
+            else
+            {
+                return StatusCode(500);
+            }
+        }
+
+        public IActionResult Calendar()
+        {
+            return View();
         }
 
         [HttpGet]
@@ -107,38 +139,6 @@ namespace Scheduler.WebClient.Controllers
             {
                 return NotFound();
             }
-        }
-
-        public IActionResult CreateEvents()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ActionName("createmeetingevent")]
-        public async Task<IActionResult> CreateMeetingEvents(string emailAddress, string appointmentDateTime, List<string> participants)
-        {
-            if(string.IsNullOrWhiteSpace(emailAddress) || string.IsNullOrWhiteSpace(appointmentDateTime) || !appointmentDateTime.Any())
-            {
-                return BadRequest();
-            }
-
-            var meetingEvent = await _graphApiClient.CreateCalenderEventAsync(emailAddress, 
-                Convert.ToDateTime(appointmentDateTime, CultureInfo.CurrentCulture), participants).ConfigureAwait(false);
-
-            if(meetingEvent != null)
-            {
-                return Ok();
-            }
-            else
-            {
-                return StatusCode(500);
-            }
-        }
-
-        public IActionResult Calendar()
-        {
-            return View();
         }
     }
 }
